@@ -1,59 +1,168 @@
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 
-# Create a main window
-login_window = tk.Tk()
-login_window.title("Login Page")
 
-# Apply a modern theme
-style = ttk.Style()
-style.theme_use('clam')  # Choose a theme (e.g., "clam")
+class AddItemPage(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Add Item")
+        self.setWindowIcon(QIcon("icon.png"))  # Replace "icon.png" with the path to your icon
+        self.setStyleSheet("background-color: #f0f0f0;")
 
-# Login page
-matricule_label = ttk.Label(login_window, text="Entrer votre  Matricule:")
-matricule_entry = ttk.Entry(login_window)
-login_button = ttk.Button(login_window, text="Login")
+        self.setupUI()
 
-matricule_label.pack(pady=10)
-matricule_entry.pack(pady=5)
-login_button.pack(pady=10)
+    def setupUI(self):
+        self.reference_label = QLabel("Reference:")
+        self.reference_input = QLineEdit()
 
-# Create a main menu window
-def open_main_menu():
-    main_menu_window = tk.Toplevel(login_window)
-    main_menu_window.title("Main Menu")
+        self.name_label = QLabel("Name:")
+        self.name_input = QLineEdit()
 
-    # Load icon images
-    add_icon = Image.open("add_icon.png")
-    add_icon = add_icon.resize((50, 50), Image.ANTIALIAS)
-    add_icon = ImageTk.PhotoImage(add_icon)
+        self.color_label = QLabel("Color:")
+        self.color_input = QLineEdit()
 
-    update_icon = Image.open("update_icon.png")
-    update_icon = update_icon.resize((50, 50), Image.ANTIALIAS)
-    update_icon = ImageTk.PhotoImage(update_icon)
+        self.entry_date_label = QLabel("Entry Date:")
+        self.entry_date_input = QLineEdit()
 
-    delete_icon = Image.open("delete_icon.png")
-    delete_icon = delete_icon.resize((50, 50), Image.ANTIALIAS)
-    delete_icon = ImageTk.PhotoImage(delete_icon)
+        self.exit_date_label = QLabel("Exit Date:")
+        self.exit_date_input = QLineEdit()
 
-    print_icon = Image.open("print_icon.png")
-    print_icon = print_icon.resize((50, 50), Image.ANTIALIAS)
-    print_icon = ImageTk.PhotoImage(print_icon)
+        self.add_button = QPushButton("Add Item")
+        self.add_button.clicked.connect(self.add_item)
 
-    # Main menu buttons with icons
-    add_button = ttk.Button(main_menu_window, image=add_icon, text="Add Item", compound="top")
-    update_button = ttk.Button(main_menu_window, image=update_icon, text="Update Item", compound="top")
-    delete_button = ttk.Button(main_menu_window, image=delete_icon, text="Delete Item", compound="top")
-    print_button = ttk.Button(main_menu_window, image=print_icon, text="Print Items", compound="top")
+        layout = QVBoxLayout()
+        layout.addWidget(self.reference_label)
+        layout.addWidget(self.reference_input)
+        layout.addWidget(self.name_label)
+        layout.addWidget(self.name_input)
+        layout.addWidget(self.color_label)
+        layout.addWidget(self.color_input)
+        layout.addWidget(self.entry_date_label)
+        layout.addWidget(self.entry_date_input)
+        layout.addWidget(self.exit_date_label)
+        layout.addWidget(self.exit_date_input)
+        layout.addWidget(self.add_button)
 
-    add_button.grid(row=0, column=0, padx=10, pady=10)
-    update_button.grid(row=0, column=1, padx=10, pady=10)
-    delete_button.grid(row=1, column=0, padx=10, pady=10)
-    print_button.grid(row=1, column=1, padx=10, pady=10)
+        self.setLayout(layout)
 
-# Bind the login button to open the main menu
-login_button.config(command=open_main_menu)
+    def add_item(self):
+        reference = self.reference_input.text()
+        name = self.name_input.text()
+        color = self.color_input.text()
+        entry_date = self.entry_date_input.text()
+        exit_date = self.exit_date_input.text()
 
-# Run the login application
-login_window.mainloop()
+        print("Item added to the database:")
+        print("Reference:", reference)
+        print("Name:", name)
+        print("Color:", color)
+        print("Entry Date:", entry_date)
+        print("Exit Date:", exit_date)
+
+
+class ViewDatabasePage(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("View Database")
+        self.setWindowIcon(QIcon("icon.png"))  # Replace "icon.png" with the path to your icon
+        self.setStyleSheet("background-color: #f0f0f0;")
+
+        self.setupUI()
+
+    def setupUI(self):
+        self.database_contents_label = QLabel("Database Contents:")
+        self.table_widget = QTableWidget()
+
+        self.table_widget.setColumnCount(5)
+        self.table_widget.setHorizontalHeaderLabels(["Reference", "Name", "Color", "Entry Date", "Exit Date"])
+
+        # Add sample data to the table (you can replace this with actual database contents)
+        data = [
+            ["001", "Item1", "Red", "2022-01-01", "2022-01-10"],
+            ["002", "Item2", "Blue", "2022-01-05", "2022-01-15"],
+            ["003", "Item3", "Green", "2022-01-10", "2022-01-20"]
+        ]
+
+        self.table_widget.setRowCount(len(data))
+
+        for i, row in enumerate(data):
+            for j, val in enumerate(row):
+                item = QTableWidgetItem(val)
+                self.table_widget.setItem(i, j, item)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.database_contents_label)
+        layout.addWidget(self.table_widget)
+
+        self.setLayout(layout)
+
+
+class LoginPage(QWidget):
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.setWindowTitle("Employee Login")
+        self.setWindowIcon(QIcon("icon.png"))  # Replace "icon.png" with the path to your icon
+        self.setStyleSheet("background-color: #f0f0f0;")
+
+        self.setupUI()
+
+    def setupUI(self):
+        self.matricule_label = QLabel("Matricule Number:")
+        self.matricule_input = QLineEdit()
+
+        self.login_button = QPushButton("Login")
+        self.login_button.clicked.connect(self.login)
+
+        self.status_label = QLabel("")
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.matricule_label)
+        layout.addWidget(self.matricule_input)
+        layout.addWidget(self.login_button)
+        layout.addWidget(self.status_label)
+
+        self.setLayout(layout)
+
+    def login(self):
+        matricule = self.matricule_input.text()
+        if matricule == "1587":
+            self.status_label.setText("Login successful")
+            self.main_window.open_add_item_page()
+        elif matricule == "1893":
+            self.status_label.setText("Login successful")
+            self.main_window.open_view_database_page()
+        else:
+            self.status_label.setText("Invalid matricule number")
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Item Management System")
+        self.setWindowIcon(QIcon("icon.png"))  # Replace "icon.png" with the path to your icon
+        self.setStyleSheet("background-color: #f0f0f0;")
+        self.login_page = LoginPage(self)
+        self.setCentralWidget(self.login_page)
+
+    def open_add_item_page(self):
+        self.add_item_page = AddItemPage()
+        self.setCentralWidget(self.add_item_page)
+
+    def open_view_database_page(self):
+        self.view_database_page = ViewDatabasePage()
+        self.setCentralWidget(self.view_database_page)
+
+
+# Create the application instance
+app = QApplication(sys.argv)
+
+# Create the main window
+main_window = MainWindow()
+main_window.show()
+
+# Run the application
+sys.exit(app.exec_())
+                    
